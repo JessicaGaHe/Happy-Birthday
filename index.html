@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carta para Valentina</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Dancing+Script&family=Fredoka+One&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f3e8ff; /* Lila pastel */
+      font-family: 'Dancing Script', cursive;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Texto Hola mi amor */
+    h1 {
+      font-family: 'Allura', cursive;
+      color: #5b21b6;
+      position: absolute;
+      left: -100%;
+      top: 30px;
+      font-size: 36px;
+      animation: slideIn 2s forwards;
+    }
+
+    @keyframes slideIn {
+      0% { left: -100%; }
+      100% { left: 50%; transform: translateX(-50%); }
+    }
+
+    /* Texto "Toca el sobre" */
+    #prompt {
+      font-family: 'Fredoka One', cursive;
+      position: absolute;
+      bottom: 180px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: #b19cd9; /* tono más claro que h1 */
+      font-weight: bold;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    /* Abeja */
+    .bee {
+      position: absolute;
+      width: 80px;
+      top: 50%;
+      left: 0;
+      transform: translate(-50%, -50%);
+      display: none;
+      transition: all 0.5s;
+    }
+
+    /* Sobre */
+    .envelope {
+      position: absolute;
+      width: 150px;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      display: none;
+      transition: transform 0.5s;
+    }
+
+    /* Carta */
+    .letter {
+      position: absolute;
+      width: 300px;
+      top: -500px; /* empieza fuera de pantalla */
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff9c4;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0px 0px 15px rgba(0,0,0,0.2);
+      display: none;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.5;
+      transition: top 1s ease-out;
+      font-family: 'Dancing Script', cursive;
+      color: #4b0082; /* más oscuro */
+    }
+
+    /* "Felicidades, mi amor" */
+    .letter .congrats {
+      font-family: 'Great Vibes', cursive;
+    }
+
+    /* Confeti */
+    #confetti-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-image: url('assets/sunflower.png');
+      background-size: cover;
+      pointer-events: none;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-50px) rotate(0deg); opacity:1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity:1; }
+    }
+  </style>
+</head>
+<body>
+  <h1 id="greeting">Hola, mi amor</h1>
+
+  <img src="assets/bee.png" alt="Abejita" class="bee" id="bee">
+  <img src="assets/envelope.png" alt="Sobre" class="envelope" id="envelope">
+
+  <div id="prompt">Toca el sobre</div>
+
+  <div id="letter" class="letter">
+    <p>
+      Valentina.<br><br>
+      No te puedes imaginar lo feliz que me hace encontrarme contigo celebrando otra vuelta al sol, de saber que nos sigues alegrando la existencia con tu presencia, de ver todo lo que has logrado, de ver todo lo que has crecido y en la maravillosa mujer en la que te has convertido.<br><br>
+      Gracias por darme la dicha de seguir a tu lado, gracias por seguir con nosotros en la tierra a pesar de lo complicado que todo se ha puesto.<br><br>
+      Me siento bendecida por tenerte en mi vida y orgullosa de ti en todos los aspectos posible a la que admiro inmensamente.<br><br>
+      <span class="congrats">Felicidades, mi dulce amor.</span><br><br>
+      <span style="display:block; text-align:right; font-family: 'Dancing Script', cursive;">Con amor, Jessica</span>
+    </p>
+  </div>
+
+  <div id="confetti-container"></div>
+  <audio id="birthday-music" src="assets/cumple.mp3"></audio>
+
+  <script>
+    const bee = document.getElementById('bee');
+    const envelope = document.getElementById('envelope');
+    const letter = document.getElementById('letter');
+    const greeting = document.getElementById('greeting');
+    const confettiContainer = document.getElementById('confetti-container');
+    const music = document.getElementById('birthday-music');
+    const prompt = document.getElementById('prompt');
+
+    let envelopeOpen = false;
+    let confettiInterval;
+
+    // Vuelo natural de la abeja
+    function flyBee() {
+      bee.style.display = 'block';
+      const duration = 4000; // 4 segundos
+      const startTime = performance.now();
+
+      function animate(time) {
+        const elapsed = time - startTime;
+        const t = elapsed / duration;
+
+        if (t < 1) {
+          // Movimiento zigzag natural
+          const x = t * window.innerWidth;
+          const y = window.innerHeight/2
+                    + Math.sin(t * 10 * Math.PI) * 120
+                    + Math.sin(t * 3 * Math.PI) * 60;
+          bee.style.left = x + 'px';
+          bee.style.top = y + 'px';
+          requestAnimationFrame(animate);
+        } else {
+          bee.style.display = 'none';
+          envelope.style.display = 'block';
+          prompt.style.opacity = 1;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function createConfetti() {
+      const confetti = document.createElement('div');
+      confetti.classList.add('confetti');
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.animationDuration = 3 + Math.random() * 2 + 's';
+      confettiContainer.appendChild(confetti);
+
+      confetti.addEventListener('animationend', () => {
+        confettiContainer.removeChild(confetti);
+      });
+    }
+
+    // Inicia la abeja después de que "Hola, mi amor" termine de moverse
+    greeting.addEventListener('animationend', flyBee);
+
+    envelope.addEventListener('click', () => {
+      if (!envelopeOpen) {
+        letter.style.display = 'block';
+        letter.style.top = '220px'; // posición final
+        envelope.style.transform = 'translateX(-50%) translateY(-20px) rotate(-10deg)';
+        bee.style.display = 'none';
+        greeting.style.opacity = 0;
+        prompt.style.opacity = 0;
+        envelopeOpen = true;
+
+        music.play();
+        confettiInterval = setInterval(createConfetti, 100);
+
+      } else {
+        letter.style.display = 'none';
+        letter.style.top = '-500px';
+        envelope.style.transform = 'translateX(-50%)';
+        bee.style.display = 'block';
+        greeting.style.opacity = 1;
+        prompt.style.opacity = 1;
+        envelopeOpen = false;
+
+        clearInterval(confettiInterval);
+        music.pause();
+        music.currentTime = 0;
+      }
+    });
+  </script>
+</body>
+</html>
